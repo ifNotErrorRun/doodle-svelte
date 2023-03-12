@@ -1,8 +1,10 @@
 <script>
 	export let userName;
-	export let jobName;
+	export let jobTitle;
 	export let description;
 	export let userImage;
+
+	const initialName = userName;
 </script>
 
 <div class="contact-card">
@@ -11,8 +13,8 @@
 			<img src={userImage} alt={userName} />
 		</div>
 		<div class="user-data">
-			<h1>{userName}</h1>
-			<h2>{jobName}</h2>
+			<h1>{userName} / {initialName}</h1>
+			<h2>{jobTitle}</h2>
 		</div>
 	</header>
 	<div class="description">
@@ -26,6 +28,7 @@
 		max-width: 30rem;
 		border-radius: 5px;
 		margin: 1rem 0;
+		background: white;
 	}
 
 	header {
@@ -52,10 +55,10 @@
 
 	.user-data {
 		width: 67%;
-		padding-left: 1em;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		padding-left: 1rem;
 	}
 
 	h1 {

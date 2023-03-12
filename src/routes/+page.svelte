@@ -1,49 +1,93 @@
 <script>
 	import ContactCard from './ContactCard.svelte';
-	import Goal from './Goal.svelte';
 
 	let name = 'Max';
-	let age = 30;
+	let title = '';
 	let image = '';
-	let jobName = 'System Engineer';
-	let description = 'Since 08.Oct.2022, working as a System Engineer in Tokyo';
-	let goal = '';
+	let description = '';
+	let formState = 'empty';
 
-	$: uppercaseName = name.toUpperCase();
-	$: console.log(name);
-	$: if (name === 'chanho') {
-		age = 26;
+	let createdContacts = [];
+
+	function addContact() {
+		// event.preventDefault();
+		if (
+			name.trim().length == 0 ||
+			title.trim().length == 0 ||
+			image.trim().length == 0 ||
+			description.trim().length == 0
+		) {
+			formState = 'invalid';
+			return;
+		}
+
+		createdContacts = [
+			...createdContacts,
+			{
+				id: Math.random(),
+				name: name,
+				jobTitle: title,
+				imageUrl: image,
+				desc: description
+			}
+		];
+		formState = 'done';
 	}
 
-	function incrementAge() {
-		age += 1;
+	function deleteFirst() {
+		createdContacts = createdContacts.slice(1);
 	}
-	function changeName() {
-		name = 'chanho';
-	}
-	function nameInput(event) {
-		const enteredValue = event.target.value;
-		name = enteredValue;
+
+	function deleteLast() {
+		createdContacts = createdContacts.slice(0, -1);
 	}
 </script>
 
-<h1>Hello {uppercaseName}, my age is {age}!</h1>
-<button on:click={incrementAge}>Change Age</button>
-<!-- <button on:click={changeName}>Change Name</button> -->
-<!-- <input type="text" on:input={nameInput} value={name} /> -->
-<input type="text" bind:value={name} />
-<input type="text" bind:value={jobName} />
-<input type="text" bind:value={image} />
-<textarea bind:value={description} />
+<form id="form">
+	<div class="form-control">
+		<label for="userName">User Name</label>
+		<input type="text" bind:value={name} id="userName" />
+	</div>
+	<div class="form-control">
+		<label for="jobTitle">Job Title</label>
+		<input type="text" bind:value={title} id="jobTitle" />
+	</div>
+	<div class="form-control">
+		<label for="image">Image URL</label>
+		<input type="text" bind:value={image} id="image" />
+	</div>
+	<div class="form-control">
+		<label for="desc">Description</label>
+		<textarea rows="3" bind:value={description} id="desc" />
+	</div>
+	<button on:click|preventDefault={addContact} type="submit">Add Contact Card</button>
+</form>
 
-<input type="text" bind:value={goal} />
+<button on:click={(event) => (createdContacts = createdContacts.slice(1))}> Delete First </button>
+<button on:click={deleteLast}>Delete Last</button>
 
-<ContactCard userName={name} {jobName} {description} userImage={image} />
+{#if formState === 'invalid'}
+	<p>Invalid input.</p>
+{:else}
+	<p>Please enter some data and hit the button!</p>
+{/if}
 
-<Goal {goal} />
+{#each createdContacts as contact, i (contact.id)}
+	<h2># {i + 1}</h2>
+	<ContactCard
+		userName={contact.name}
+		jobTitle={contact.jobTitle}
+		description={contact.desc}
+		userImage={contact.imageUrl}
+	/>
+{:else}
+	<p>Please start adding some contacts, we found none!</p>
+{/each}
 
 <style>
-	h1 {
-		color: purple;
+	#form {
+		width: 30rem;
+		max-width: 100%;
+		margin: 1rem 0;
 	}
 </style>
